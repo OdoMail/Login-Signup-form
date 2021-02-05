@@ -20,13 +20,6 @@
     </head>
 
     <body class="body">
-      <a href="https://github.com/Mehedi61/Login-form-Sign-up-form"
-        ><img
-          style="position: absolute; top: 0; left: 0; border: 0"
-          src="https://camo.githubusercontent.com/c6625ac1f3ee0a12250227cf83ce904423abf351/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677261795f3664366436642e706e67"
-          alt="Fork me on GitHub"
-          data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_gray_6d6d6d.png"
-      /></a>
 
       <div class="login-page">
         <div class="form">
@@ -39,17 +32,16 @@
               loop
               autoplay
             ></lottie-player>
-            <input type="text" placeholder="full name" />
-            <input type="text" placeholder="email address" />
-            <input type="text" placeholder="pick a username" />
-            <input type="password" id="password" placeholder="set a password" />
+            <input type="text" id="name" placeholder="Full Name" />
+            <input type="text" id="local_data" placeholder="Username/Email" />
+            <input type="password" id="password" placeholder="Set a Password" />
             <i class="fas fa-eye" onclick="show()"></i>
             <br>
             <br>
           </form>
 
           <form class="login-form">
-            <button type="button" onclick="window.location.href='login.html'">
+            <button type="button" onclick="window.location.href='welcome.html'">
               SIGN UP
             </button>
           </form>
@@ -69,5 +61,66 @@
         }
       }
     </script>
+
+<?php
+
+//set empty variable placeholders
+$fullname = $password = $email = "";
+
+//Get data from Form
+$name = secure_data($_POST['name']);
+$password = secure_data($_POST['password']);
+$local_part = secure_data($_POST['local_part']);
+
+//Set API Key
+$apiKey = "dc73h84f-7674-42c6-8461-2v123d029co0";
+
+//Strip html and slashes etc
+function secure_data($data){
+    $Sdata = trim($data);
+    $Sdata = stripslashes($data);
+    $Sdata = htmlspecialchars($data);
+    //var_dump($Sdata);
+    return $Sdata;
+}
+
+//Set up POST array
+$array = array (
+    "name" => $name,
+    "password" => $password,
+    "local_part" => $local_part,
+    "apiKey" => $apiKey,
+);
+
+$data_string = json_encode($array);
+
+var_dump ($data_string);
+
+$url = 'https://mail.odomail.com/api/v1/add/mailbox';
+
+//Create cURL connection
+$curl = curl_init($url);
+
+//set cURL options
+curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//curl_setopt($curl, CURLOPT_POST, true);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($data_string))
+);
+
+//Execute cURL
+$curl_response = curl_exec($curl);
+
+//Output server response
+print_r($curl_response);
+
+//Close cURL connection
+curl_close($curl);
+
+?>
+
   </html>
 </html>
